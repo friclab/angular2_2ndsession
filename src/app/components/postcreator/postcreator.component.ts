@@ -16,4 +16,6 @@ export class PostcreatorComponent {
         this.onNewPost.emit(this.content);
 
     }
+
+    
 }

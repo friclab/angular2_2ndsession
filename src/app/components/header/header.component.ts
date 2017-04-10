@@ -5,6 +5,6 @@ import { Component, OnInit, Input } from '@angular/core';
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.css']
 })
-export class HeaderComponent { 
-    @Input('data') title: string; 
+export class HeaderComponent {
+    @Input('data') title: string;
 }

@@ -1,5 +1,6 @@
+import { ApiService } from './../../services/api.service';
 import { Post } from './../../models/post';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'content-component',
@@ -10,48 +11,103 @@ export class ContentComponent implements OnInit {
 
   posts: Array<Post>;
   totalLikes: number;
+ // @Output() onCreated: EventEmitter<any> = new EventEmitter();
+
+
+  constructor(private apiService: ApiService) { }
 
   ngOnInit() {
     this.totalLikes = 0;
-    this.posts = [{
-      id: 1,
-      likes: 1,
-      content: "sono uil contentuto del post 1 "
-    },
-    {
-      id: 2,
-      likes: 1,
-      content: "sono uil contentuto del post 2 "
-    },
-    {
-      id: 3,
-      likes: 0,
-      content: "sono uil contentuto del post 3 "
-    },
-    {
-      id: 4,
-      likes: 99,
-      content: "sono uil contentuto del post 4 "
-    }];
-    this.posts.map((post: Post) => {
-      this.totalLikes = this.totalLikes + post.likes;
-    });
+     
+
+    this.listPosts();
+
+    //setInterval( this.listPosts.bind(this), 2000);
+    setInterval(() => { this.listPosts() }, 20000);
+
+
   }
 
   onLike($event) {
     console.log("onlike:", $event);
-    this.totalLikes = this.totalLikes + 1;
+    console.log("likePost:", $event);
 
+    this.apiService.likePost($event).subscribe(
+      (data) => {
+        console.log("likePost", data);
+        this.listPosts();
+      },
+      () => {
+        console.log("error!!");
+      });
+
+  }
+
+  onDelete($event) {
+    console.log("onDelete:", $event);
+    this.apiService.deletePost($event.id).subscribe(
+      (data) => {
+        console.log("deletePost", data);
+        this.listPosts();
+      },
+      () => {
+        console.log("error!!");
+      });
+
+  }
+
+  listPosts() {
+    this.totalLikes = 0;
+    this.apiService.fetchPosts().subscribe(
+
+      (data) => {
+        console.log("fetch", data);
+        this.posts = data;
+        this.posts.map((post: Post) => {
+          this.totalLikes = this.totalLikes + post.likes;
+        });
+      },
+      () => {
+        console.log("error!!");
+      });
   }
 
 
   createPost($event: string) {
     console.log("createPost:", $event);
-    let post: Post = {
-      id: this.posts.length + 1,
+    let post: any = {
+
       likes: 0,
       content: $event
     };
-    this.posts.push(post);
+
+    this.apiService.createPost(post).subscribe(
+      (data) => {
+        console.log("createPost", data);
+    //    this.onCreated.emit(null);
+        this.listPosts();
+
+      },
+      () => {
+        console.log("error!!");
+      });
+
   }
+
+
+
+  deletePost($event: number) {
+    console.log("deletePost:", $event);
+
+    this.apiService.deletePost($event).subscribe(
+      (data) => {
+        console.log("deletePost", data);
+        this.listPosts();
+      },
+      () => {
+        console.log("error!!");
+      });
+
+  }
+
 }

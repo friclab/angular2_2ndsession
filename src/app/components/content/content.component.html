@@ -2,5 +2,5 @@
 <p>TOTAL LIKES: {{totalLikes}}</p>
 <postcreator-component (onNewPost)="createPost($event)" > </postcreator-component>
 <div class="row">
-<post-component class="col s3" *ngFor="let post of posts" [data]="post" (onLike)="onLike($event)" > </post-component>
+<post-component class="col s3 m3" *ngFor="let post of posts" [data]="post" (onLike)="onLike($event)" (onDelete)="onDelete($event)"  > </post-component>
 </div>
